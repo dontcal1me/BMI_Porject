@@ -1,0 +1,52 @@
+[
+    {
+        "id": "P2026-0001",
+        "name": "홍길동",
+        "birth_year": 1995,
+        "gender": "남",
+        "height": 175.0,
+        "weight": 72.5,
+        "bmi": 23.67,
+        "status": "과체중"
+    },
+    {
+        "id": "P2026-0002",
+        "name": "김영희",
+        "birth_year": 1998,
+        "gender": "여",
+        "height": 162.0,
+        "weight": 52.0,
+        "bmi": 19.81,
+        "status": "정상"
+    },
+    {
+        "id": "P2026-0003",
+        "name": "이철수",
+        "birth_year": 1988,
+        "gender": "남",
+        "height": 180.0,
+        "weight": 95.0,
+        "bmi": 29.32,
+        "status": "비만"
+    },
+    {
+        "id": "P2026-0004",
+        "name": "박민지",
+        "birth_year": 2001,
+        "gender": "여",
+        "height": 158.0,
+        "weight": 44.0,
+        "bmi": 17.63,
+        "status": "저체중"
+    },
+    {
+        "id": "P2026-0005",
+        "name": "최준호",
+        "birth_year": 1992,
+        "gender": "남",
+        "height": 170.0,
+        "weight": 70.0,
+        "bmi": 24.22,
+        "status": "과체중"
+    }
+]
