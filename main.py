@@ -7,15 +7,16 @@ BMI 건강관리 프로그램 - 실행 진입점
 3. 저장된 파일을 각각 다시 읽어 출력하고, 원래 정보와 일치하는지 검증한다.
 """
 
+
+
+from modules.health_db import HealthDB
+
 # [AI 사용]
 # - AI 종류   : Claude (Claude Code)
 # - 사용 목적 : 모듈 1 저장/읽기 결과를 검증하는 main() 작성
 # - 프롬프트  : "main()에서 저장하기 전 값과 저장된 값을 읽어서 일치하는지 검증해줘"
 # - 사용자    : Yunjongha
 # - 날짜      : 2026-11-11
-
-from modules.health_db import HealthDB
-
 
 def main():
     # 1. 임의의 데이터 입력 후 출력
@@ -39,7 +40,15 @@ def main():
     db.save_pickle()
     print(f"\n4가지 형식으로 저장 완료 → {db.data_dir}")
 
+# [AI 사용]
+# - AI 종류   : Claude (Claude Code)
+# - 사용 목적 : 모듈 1 저장/읽기 결과를 검증하는 main() 작성
+# - 프롬프트  : "다음을 모르겠어 이어서 리드미를 읽고 이어서 작성해줘 "
+# - 사용자    : Yunjongha
+# - 날짜      : 2026-11-11
+    
     # 3. 각 파일을 읽어 출력하고 원본과 비교
+
     original = list(db.records)
     formats = [
         ("JSON", "load_json"),
