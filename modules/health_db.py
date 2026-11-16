@@ -34,13 +34,17 @@ class HealthRecord:
     키(cm)와 몸무게(kg)로 BMI와 비만도 상태를 자동으로 계산한다.
     """
 
-    def __init__(self, id, name, birth_year, gender, height, weight):
+    # 모든 레코드가 공유하는 마지막 일련번호 (환자식별번호 자동생성용)
+    _last_no = 0
+
+    def __init__(self, name, birth_year, gender, height, weight, id=None):
+        """id는 지정하지 않으면 자동 생성된다. (파일에서 복원할 때만 id를 넘긴다)"""
         height = float(height)
         weight = float(weight)
         if height <= 0 or weight <= 0:
             raise ValueError("키와 몸무게는 0보다 큰 숫자여야 합니다.")
 
-        self.id = id
+        self.id = id if id is not None else self._generate_id()
         self.name = name
         self.birth_year = int(birth_year)
         self.gender = gender
@@ -49,6 +53,21 @@ class HealthRecord:
         self.bmi = 0.0
         self.status = ""
         self.calculate_bmi()
+
+    @classmethod
+    def _generate_id(cls):
+        """'P연도-일련번호' 형식의 고유한 환자식별번호를 생성한다. (예: P2026-0001)"""
+        cls._last_no += 1
+        return f"P{datetime.now().year}-{cls._last_no:04d}"
+
+    @classmethod
+    def sync_counter(cls, records):
+        """불러온 레코드 중 가장 큰 일련번호로 카운터를 맞춰, 새 번호가 겹치지 않게 한다."""
+        for record in records:
+            try:
+                cls._last_no = max(cls._last_no, int(str(record.id).rsplit("-", 1)[1]))
+            except (IndexError, ValueError):
+                pass
 
     def calculate_bmi(self):
         """BMI = 몸무게(kg) / (키(m))² 를 계산하고 비만도 상태를 판정한다."""
@@ -59,8 +78,6 @@ class HealthRecord:
     @staticmethod
     def judge_status(bmi):
         """BMI 수치로 비만도 상태(저체중 / 정상 / 과체중 / 비만)를 반환한다.
-
-        기준 (대한비만학회): 18.5 미만 저체중, 23 미만 정상, 25 미만 과체중, 25 이상 비만
         """
         if bmi < 18.5:
             return "저체중"
@@ -88,12 +105,12 @@ class HealthRecord:
     def from_dict(cls, data):
         """딕셔너리로부터 레코드 객체를 생성한다. (BMI와 상태는 다시 계산)"""
         return cls(
-            data["id"],
             data["name"],
             data["birth_year"],
             data["gender"],
             data["height"],
             data["weight"],
+            id=data["id"],
         )
 
     def __eq__(self, other):
@@ -117,25 +134,12 @@ class HealthDB:
     # ------------------------------------------------------------
     # 레코드 관리
     # ------------------------------------------------------------
-    def generate_id(self):
-        """'P연도-일련번호' 형식의 고유한 환자식별번호를 생성한다. (예: P2026-0001)"""
-        year = datetime.now().year
-        prefix = f"P{year}-"
-        max_no = 0
-        for record in self.records:
-            if record.id.startswith(prefix):
-                try:
-                    max_no = max(max_no, int(record.id[len(prefix):]))
-                except ValueError:
-                    pass
-        return f"{prefix}{max_no + 1:04d}"
-
     def add_record(self, name, birth_year, gender, height, weight):
         """새 레코드를 만들어 목록에 추가하고, 추가된 레코드를 반환한다.
 
-        식별번호는 자동으로 생성된다.
+        식별번호는 HealthRecord가 자동으로 생성한다.
         """
-        record = HealthRecord(self.generate_id(), name, birth_year, gender, height, weight)
+        record = HealthRecord(name, birth_year, gender, height, weight)
         self.records.append(record)
         return record
 
@@ -179,6 +183,7 @@ class HealthDB:
         except (OSError, json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
             print(f"[오류] JSON 읽기 실패: {e}")
             self.records = []
+        HealthRecord.sync_counter(self.records)
         return self.records
 
     # ------------------------------------------------------------
@@ -207,6 +212,7 @@ class HealthDB:
         except (OSError, csv.Error, KeyError, ValueError, TypeError) as e:
             print(f"[오류] CSV 읽기 실패: {e}")
             self.records = []
+        HealthRecord.sync_counter(self.records)
         return self.records
 
     # ------------------------------------------------------------
@@ -241,6 +247,7 @@ class HealthDB:
         except (OSError, ValueError) as e:
             print(f"[오류] TXT 읽기 실패: {e}")
             self.records = []
+        HealthRecord.sync_counter(self.records)
         return self.records
 
     # ------------------------------------------------------------
@@ -267,4 +274,5 @@ class HealthDB:
         except (OSError, pickle.UnpicklingError, EOFError, AttributeError) as e:
             print(f"[오류] Pickle 읽기 실패: {e}")
             self.records = []
+        HealthRecord.sync_counter(self.records)
         return self.records
