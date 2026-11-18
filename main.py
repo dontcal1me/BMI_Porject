@@ -1,7 +1,11 @@
 """
 BMI 건강관리 프로그램 - 실행 진입점
 
-11주차(모듈 1) 검증:
+12주차(모듈 2): 콘솔 APP(run_console)으로 HealthManager 기능을 시험한다.
+    python main.py          → 콘솔 APP 실행
+    python main.py module1  → 11주차 모듈 1 파일 저장/읽기 검증 실행
+
+11주차(모듈 1) 검증 (test_module1):
 1. 임의의 건강정보 레코드를 입력하고 화면에 출력한다.
 2. 이 데이터를 JSON / CSV / TXT / Pickle 4가지 파일로 저장한다.
 3. 저장된 파일을 각각 다시 읽어 출력하고, 원래 정보와 일치하는지 검증한다.
@@ -9,7 +13,10 @@ BMI 건강관리 프로그램 - 실행 진입점
 
 
 
+import sys
+
 from modules.health_db import HealthDB
+from modules.health_logic import run_console
 
 # [AI 사용]
 # - AI 종류   : Claude (Claude Code)
@@ -18,7 +25,7 @@ from modules.health_db import HealthDB
 # - 사용자    : Yunjongha
 # - 날짜      : 2026-11-11
 
-def main():
+def test_module1():
     # 1. 임의의 데이터 입력 후 출력
     db = HealthDB()
     sample_data = [
@@ -40,12 +47,6 @@ def main():
     db.save_pickle()
     print(f"\n4가지 형식으로 저장 완료 → {db.data_dir}")
 
-# [AI 사용]
-# - AI 종류   : Claude (Claude Code)
-# - 사용 목적 : 모듈 1 저장/읽기 결과를 검증하는 main() 작성
-# - 프롬프트  : "다음을 모르겠어 이어서 리드미를 읽고 이어서 작성해줘 "
-# - 사용자    : Yunjongha
-# - 날짜      : 2026-11-11
     
     # 3. 각 파일을 읽어 출력하고 원본과 비교
 
@@ -73,6 +74,19 @@ def main():
         print("\n모든 파일의 데이터가 원본과 일치합니다.")
     else:
         print("\n일부 파일의 데이터가 원본과 다릅니다.")
+
+
+# [AI 사용]
+# - AI 종류   : Claude (Claude Code)
+# - 사용 목적 : 12주차 모듈 2 콘솔 APP 실행 진입점 추가
+# - 프롬프트  : "리드미를 읽고 모듈 2를 제작해줘"
+# - 사용자    : Yunjongha
+# - 날짜      : 2026-11-18
+def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "module1":
+        test_module1()
+    else:
+        run_console()
 
 
 if __name__ == "__main__":

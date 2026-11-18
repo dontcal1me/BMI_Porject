@@ -1,7 +1,7 @@
 [
     {
         "id": "P2026-0001",
-        "name": "홍길똥",
+        "name": "홍길동",
         "birth_year": 1995,
         "gender": "남",
         "height": 175.0,
@@ -48,5 +48,15 @@
         "weight": 70.0,
         "bmi": 24.22,
         "status": "과체중"
+    },
+    {
+        "id": "P2026-0006",
+        "name": "이승식]",
+        "birth_year": 2007,
+        "gender": "남",
+        "height": 180.0,
+        "weight": 100.0,
+        "bmi": 30.86,
+        "status": "비만"
     }
 ]
