@@ -51,12 +51,42 @@
     },
     {
         "id": "P2026-0006",
-        "name": "이승식]",
+        "name": "이승식",
         "birth_year": 2007,
         "gender": "남",
         "height": 180.0,
         "weight": 100.0,
         "bmi": 30.86,
         "status": "비만"
+    },
+    {
+        "id": "P2026-0007",
+        "name": "이우성",
+        "birth_year": 2007,
+        "gender": "남",
+        "height": 168.0,
+        "weight": 70.0,
+        "bmi": 24.8,
+        "status": "과체중"
+    },
+    {
+        "id": "P2026-0008",
+        "name": "윤종하",
+        "birth_year": 2007,
+        "gender": "남",
+        "height": 180.0,
+        "weight": 70.0,
+        "bmi": 21.6,
+        "status": "정상"
+    },
+    {
+        "id": "P2026-0009",
+        "name": "류지언",
+        "birth_year": 2007,
+        "gender": "남",
+        "height": 160.0,
+        "weight": 60.0,
+        "bmi": 23.44,
+        "status": "과체중"
     }
 ]

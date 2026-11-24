@@ -15,7 +15,7 @@ GUI(모듈 3)에서는 try-except로 잡아 messagebox에 메시지를 그대로
 # - 사용 목적 : 모듈 2(HealthManager 클래스: CRUD, 중복 체크, 검색, BMI 재계산, 통계, CSV 일괄 등록) 및 콘솔 테스트 APP 작성
 # - 프롬프트  : "리드미를 읽고 모듈 2를 제작해줘"
 # - 사용자    : Yunjongha
-# - 날짜      : 2026-11-18
+# - 날짜      : 2026-11-18 
 
 import csv
 from datetime import datetime
