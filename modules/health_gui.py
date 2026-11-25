@@ -18,6 +18,13 @@ tkinter로 만든 GUI 화면. 실제 처리는 모두 모듈 2(HealthManager)에
 # - 프롬프트  : "리드미를 읽고 모듈 3을 완성해줘", "설명하기 쉽게 다운그레이드 해줘 gui"
 # - 사용자    : Yunjongha
 # - 날짜      : 2026-11-24
+#
+# [AI 사용]
+# - AI 종류   : Claude (Claude Code)
+# - 사용 목적 : 1학년 수준 리팩토링에 맞춰 모듈 2 호출 방식(update, search) 정리
+# - 프롬프트  : "현제 작성된 코드를 컴퓨터공학과 1학년 대학생 수준으로 전면 리팩토링해줘"
+# - 사용자    : Yunjongha
+# - 날짜      : 2026-11-25
 
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -210,11 +217,11 @@ class HealthApp:
             return
         try:
             record = self.manager.update(record_id,
-                                         name=self.name_entry.get(),
-                                         birth_year=self.birth_entry.get(),
-                                         gender=self.gender_box.get(),
-                                         height=self.height_entry.get(),
-                                         weight=self.weight_entry.get())
+                                         self.name_entry.get(),
+                                         self.birth_entry.get(),
+                                         self.gender_box.get(),
+                                         self.height_entry.get(),
+                                         self.weight_entry.get())
         except ValueError as e:
             messagebox.showwarning("수정 실패", str(e))
             return
@@ -241,11 +248,8 @@ class HealthApp:
 
     def search(self):
         """검색 버튼: 이름 또는 식별번호에 검색어가 들어간 사람을 보여준다."""
-        keyword = self.search_entry.get().strip()
-        by_name = self.manager.search(name=keyword)
-        by_id = self.manager.search(record_id=keyword)
-        # 두 결과를 합치되, 같은 사람은 한 번만 넣는다
-        results = by_name + [r for r in by_id if r not in by_name]
+        keyword = self.search_entry.get()
+        results = self.manager.search(keyword)   # 모듈 2가 이름·식별번호 둘 다 검사한다
         self.show_records(results)
 
     def show_all(self):
@@ -289,6 +293,3 @@ def run_gui():
     HealthApp(root)
     root.mainloop()
 
-
-if __name__ == "__main__":
-    run_gui()

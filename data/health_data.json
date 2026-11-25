@@ -88,5 +88,25 @@
         "weight": 60.0,
         "bmi": 23.44,
         "status": "과체중"
+    },
+    {
+        "id": "P2026-0010",
+        "name": "윤종하",
+        "birth_year": 2008,
+        "gender": "남",
+        "height": 175.0,
+        "weight": 54.0,
+        "bmi": 17.63,
+        "status": "저체중"
+    },
+    {
+        "id": "P2026-0011",
+        "name": "이찬민",
+        "birth_year": 2007,
+        "gender": "남",
+        "height": 180.0,
+        "weight": 70.0,
+        "bmi": 21.6,
+        "status": "정상"
     }
 ]

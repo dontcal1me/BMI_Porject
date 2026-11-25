@@ -291,7 +291,7 @@ def add_record(self):
 4. **성공하면** : 안내창 → 입력칸 비우기 → 표 새로고침
 
 > **입력값 검사는 어디서 하나요?**
-> GUI가 아니라 **모듈 2의 `validate()`** 에서 합니다.
+> GUI가 아니라 **모듈 2의 `check_input()`** 에서 합니다.
 > 키에 "abc"나 0을 넣으면 모듈 2가 `ValueError("키와 몸무게는 숫자로 입력하세요.")`를 발생시키고,
 > GUI는 그 메시지를 `str(e)`로 꺼내 그대로 알림창에 보여줍니다.
 > 그래서 잘못 입력해도 **프로그램이 꺼지지 않습니다.** (README 비기능 요구사항 1번)
@@ -306,7 +306,7 @@ if record_id == "":
 ```
 
 - 식별번호 칸이 비어 있다 = 표에서 아무도 선택하지 않았다 → 경고 후 종료
-- 수정은 `self.manager.update(record_id, name=..., height=...)` 처럼 **키워드 인자**로 넘깁니다.
+- 수정은 `self.manager.update(record_id, 이름, 생년, 성별, 키, 몸무게)` 순서대로 입력칸 값을 넘깁니다.
   키·몸무게가 바뀌면 BMI 재계산은 모듈 2가 해줍니다.
 - 삭제는 실수로 지우지 않도록 `messagebox.askyesno`로 한 번 더 묻습니다.
   "예"를 누르면 `True`, "아니오"면 `False`를 돌려줍니다.
@@ -314,16 +314,13 @@ if record_id == "":
 ### 3-10. `search` : 검색
 
 ```python
-keyword = self.search_entry.get().strip()        # 앞뒤 공백 제거
-by_name = self.manager.search(name=keyword)      # 이름에 검색어가 들어간 사람
-by_id   = self.manager.search(record_id=keyword) # 식별번호에 검색어가 들어간 사람
-results = by_name + [r for r in by_id if r not in by_name]   # 합치기 (중복 제거)
+keyword = self.search_entry.get()
+results = self.manager.search(keyword)   # 모듈 2가 이름·식별번호 둘 다 검사한다
 self.show_records(results)
 ```
 
-- 검색창 하나로 이름과 식별번호를 **둘 다** 찾기 위해 두 번 검색 후 합칩니다.
-- `[r for r in by_id if r not in by_name]` 은 **리스트 컴프리헨션**:
-  "by_id 중에서 by_name에 없는 것만 모은 리스트"
+- 검색창 하나로 이름과 식별번호를 **둘 다** 찾습니다.
+- 모듈 2의 `search()`가 레코드를 하나씩 보면서 "이름에 검색어가 있거나, 식별번호에 검색어가 있으면" 결과 리스트에 넣어 줍니다.
 
 ### 3-11. 파일 버튼
 
@@ -360,7 +357,7 @@ def run_gui():
 ② mainloop가 감지 → command로 연결된 add_record() 실행           (모듈 3)
 ③ entry.get()으로 "박지성", "1990", "남", "178", "73" 읽기         (모듈 3)
 ④ self.manager.add(...) 호출                                       (모듈 3 → 모듈 2)
-⑤ validate(): 문자열 "178" → 숫자 178.0 변환, 범위 검사            (모듈 2)
+⑤ check_input(): 문자열 "178" → 숫자 178.0 변환, 범위 검사            (모듈 2)
 ⑥ is_duplicate(): 같은 이름·생년·성별이 있는지 검사                (모듈 2)
 ⑦ db.add_record() → HealthRecord 생성                              (모듈 2 → 모듈 1)
 ⑧ 식별번호 자동 생성 "P2026-0010", BMI = 73 / 1.78² = 23.04, "과체중" (모듈 1)

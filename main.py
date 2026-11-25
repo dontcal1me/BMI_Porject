@@ -34,6 +34,21 @@ from modules.health_logic import run_console
 # - 프롬프트  : "메인도 그에 맞게 변경해줘"
 # - 사용자    : Yunjongha
 # - 날짜      : 2026-11-24
+#
+# [AI 사용]
+# - AI 종류   : Claude (Claude Code)
+# - 사용 목적 : 1학년 수준 리팩토링 (getattr 동적 호출 제거, 형식별 검증을 순서대로 작성)
+# - 프롬프트  : "현제 작성된 코드를 컴퓨터공학과 1학년 대학생 수준으로 전면 리팩토링해줘"
+# - 사용자    : Yunjongha
+# - 날짜      : 2026-11-25
+def to_dict_list(records):
+    """레코드 리스트를 딕셔너리 리스트로 바꾼다. (두 목록이 같은지 비교할 때 사용)"""
+    result = []
+    for r in records:
+        result.append(r.to_dict())
+    return result
+
+
 def test_module1():
     """모듈 1 검증: 샘플 데이터를 4가지 형식으로 저장하고 다시 읽어 원본과 비교한다.
 
@@ -42,47 +57,55 @@ def test_module1():
     with tempfile.TemporaryDirectory() as temp_dir:
         # 1. 임의의 데이터 입력 후 출력
         db = HealthDB(temp_dir)
-        sample_data = [
-            ("홍길동", 1995, "남", 175.0, 72.5),
-            ("김영희", 1998, "여", 162.0, 52.0),
-            ("이철수", 1988, "남", 180.0, 95.0),
-            ("박민지", 2001, "여", 158.0, 44.0),
-            ("최준호", 1992, "남", 170.0, 70.0),
-        ]
-        for name, birth_year, gender, height, weight in sample_data:
-            db.add_record(name, birth_year, gender, height, weight)
-
+        db.add_record("홍길동", 1995, "남", 175.0, 72.5)
+        db.add_record("김영희", 1998, "여", 162.0, 52.0)
+        db.add_record("이철수", 1988, "남", 180.0, 95.0)
+        db.add_record("박민지", 2001, "여", 158.0, 44.0)
+        db.add_record("최준호", 1992, "남", 170.0, 70.0)
         db.print_records("원본 데이터")
+        original = to_dict_list(db.records)
 
         # 2. 4가지 파일 형식으로 저장
         db.save_json()
         db.save_csv()
         db.save_txt()
         db.save_pickle()
-        print(f"\n4가지 형식으로 저장 완료 → {db.data_dir} (임시 폴더)")
+        print("\n4가지 형식으로 저장 완료 (임시 폴더)")
 
-        # 3. 각 파일을 읽어 출력하고 원본과 비교
-        original = list(db.records)
-        formats = [
-            ("JSON", "load_json"),
-            ("CSV", "load_csv"),
-            ("TXT", "load_txt"),
-            ("Pickle", "load_pickle"),
-        ]
+        # 3. 각 파일을 새 HealthDB로 읽어서 원본과 비교
+        results = {}
 
-        results = []
-        for fmt, method_name in formats:
-            loaded_db = HealthDB(temp_dir)
-            getattr(loaded_db, method_name)()
-            loaded_db.print_records(f"{fmt} 파일에서 읽은 데이터")
-            results.append((fmt, loaded_db.records == original))
+        loaded = HealthDB(temp_dir)
+        loaded.load_json()
+        loaded.print_records("JSON 파일에서 읽은 데이터")
+        results["JSON"] = to_dict_list(loaded.records) == original
+
+        loaded = HealthDB(temp_dir)
+        loaded.load_csv()
+        loaded.print_records("CSV 파일에서 읽은 데이터")
+        results["CSV"] = to_dict_list(loaded.records) == original
+
+        loaded = HealthDB(temp_dir)
+        loaded.load_txt()
+        loaded.print_records("TXT 파일에서 읽은 데이터")
+        results["TXT"] = to_dict_list(loaded.records) == original
+
+        loaded = HealthDB(temp_dir)
+        loaded.load_pickle()
+        loaded.print_records("Pickle 파일에서 읽은 데이터")
+        results["Pickle"] = to_dict_list(loaded.records) == original
 
     # 4. 검증 결과 요약
     print("\n[검증 결과]")
-    for fmt, ok in results:
-        print(f"  {fmt:<7}: {'일치' if ok else '불일치'}")
+    all_ok = True
+    for fmt in results:
+        if results[fmt]:
+            print(f"  {fmt:<7}: 일치")
+        else:
+            print(f"  {fmt:<7}: 불일치")
+            all_ok = False
 
-    if all(ok for _, ok in results):
+    if all_ok:
         print("\n모든 파일의 데이터가 원본과 일치합니다.")
     else:
         print("\n일부 파일의 데이터가 원본과 다릅니다.")
